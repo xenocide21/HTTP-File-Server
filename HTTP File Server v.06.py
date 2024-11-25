@@ -139,7 +139,7 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(b"<html><body>File not found</body></html>")
 
-        # Main page with upload form and gif
+        # Main page with upload form, gif, and useful links sidebar using a table layout
         else:
             self.send_response(200)
             self.send_header("Content-type", "text/html")
@@ -155,16 +155,48 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                         background-color: #c3c3c3;
                         font-family: Geneva, sans-serif;
                         margin: 0;
-                        padding-bottom: 50px; 
-                        min-height: 100vh; 
+                        padding-bottom: 50px;
+                        min-height: 100vh;
                     }
-                    .dialog {
+                    table {
+                        width: 100%;
+                        margin-top: 20px;
+                        margin-bottom: 20px;
+                    }
+                    .panel {
                         background-color: #e0e0e0;
                         border: 2px solid black;
                         padding: 20px;
-                        width: 300px;
+                        width: 240px;
+                        height: 350px;
                         text-align: center;
-                        margin: 20px auto;
+                    }
+                    .sidebar {
+                        width: 300px;
+                    }
+                    .sidebar h2 {
+                        font-size: 16px;
+                        color: black;
+                        margin-bottom: 10px;
+                    }
+                    .sidebar ul {
+                        list-style-type: none;
+                        padding: 0;
+                        margin: 0;
+                    }
+                    .sidebar ul li {
+                        margin: 5px 0;
+                    }
+                    .sidebar ul li a {
+                        text-decoration: none;
+                        color: #0066cc;  /* Link color */
+                        display: block;  /* Ensure the whole area is clickable */
+                        padding: 5px 10px; /* Add some padding for the hover effect */
+                    }
+                    .sidebar ul li a:hover {
+                        text-decoration: underline;
+                        color: #0044aa; /* Hover color */
+                        background-color: #d3d3d3; /* Darker grey background on hover */
                     }
                     .dialog h1 {
                         font-size: 18px;
@@ -190,32 +222,61 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                         text-align: center;
                         margin-bottom: 20px;
                     }
+                    .gif-container img {
+                        width: 140px; /* Resize the GIF */
+                        height: auto; /* Maintain aspect ratio */
+                    }
                     footer {
+                        clear: both;
                         text-align: center;
                         margin-top: 20px;
                     }
                 </style>
             </head>
             <body>
-                <div class="dialog">
-                    <div class="gif-container">
-                        <img src="/artifact.gif" alt="Artifact GIF" width="250">
-                    </div>
-                    <h1>Upload File</h1>
-                    <form enctype="multipart/form-data" method="post">
-                        <input name="file" type="file" />
-                        <input type="submit" value="Upload" />
-                    </form>
-                    <div>
-                        <a href="/list">View File Index</a>
-                    </div>
-                </div>
+                <table>
+                    <tr>
+                        <!-- Sidebar -->
+                        <td class="sidebar" valign="top">
+                            <div class="panel">
+                                <h2>Useful Links</h2>
+                                <ul>
+                                    <li><a href="http://macintoshgarden.org" target="_blank">Macintosh Garden</a></li>
+                                    <li><a href="http://macintoshrepository.org" target="_blank">Macintosh Repository</a></li>
+                                    <li><a href="http://archive.org" target="_blank">Archive.org</a></li>
+                                    <li><a href="http://frogfind.com" target="_blank">Frogfind</a></li>
+                                    <li><a href="http://theoldnet.com" target="_blank">The Old Net</a></li>
+                                    <li><a href="http://retronetwork.net" target="_blank">RetroNetwork</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                        <!-- Main file upload section -->
+                        <td class="dialog" valign="top">
+                            <div class="panel">
+                                <h1> HTTP File Server </h1>
+                                <div class="gif-container">
+                                    <img src="/artifact.gif" alt="Artifact GIF">
+                                </div>
+                                <h1>Upload File</h1>
+                                <form enctype="multipart/form-data" method="post">
+                                    <input name="file" type="file" />
+                                    <input type="submit" value="Upload File" />
+                                </form>
+                                <div>
+                                    <a href="/list">View All Files</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
                 <footer>
                     <p>Created by Xenocide21 | Date: 22-11-24</p>
                 </footer>
             </body>
             </html>
             """)
+
+
 
     def do_POST(self):
         # Handle file uploads
