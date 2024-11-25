@@ -7,9 +7,15 @@ import socket
 class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     
     def do_GET(self):
-        # Serve the artifact.gif file
-        if self.path == "/artifact.gif":
-            file_path = "artifact.gif"
+        image_map = {
+            "/artifact.gif": "artifact.gif",
+            "/server.gif": "server.gif",
+            "/webicon.gif": "webicon.gif"
+        }
+
+        # Check if the path matches one of the image files
+        if self.path in image_map:
+            file_path = image_map[self.path]
             if os.path.exists(file_path):
                 try:
                     with open(file_path, "rb") as f:
@@ -41,7 +47,7 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 if os.path.exists(directory):
                     files.extend([
                         f for f in os.listdir(directory)
-                        if os.path.isfile(os.path.join(directory, f)) and not f.endswith(".py") and f != "artifact.gif"
+                        if os.path.isfile(os.path.join(directory, f)) and not f.endswith(".py") and f != "artifact.gif" and f != "server.gif" and f != "webicon.gif"
                     ])
              # Generate the links for the files found
             file_links = "".join(
@@ -139,7 +145,6 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(b"<html><body>File not found</body></html>")
 
-        # Main page with upload form, gif, and useful links sidebar using a table layout
         else:
             self.send_response(200)
             self.send_header("Content-type", "text/html")
@@ -170,6 +175,7 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                         width: 240px;
                         height: 350px;
                         text-align: center;
+                        position: relative; /* Allow absolute positioning of the icon */
                     }
                     .sidebar {
                         width: 300px;
@@ -186,6 +192,11 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     }
                     .sidebar ul li {
                         margin: 5px 0;
+                        background-color: #c3c3c3;
+                        border: 2px solid black;
+                    }
+                    .sidebar ul li:hover {
+                        background-color: #d3d3d3;
                     }
                     .sidebar ul li a {
                         text-decoration: none;
@@ -231,6 +242,14 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                         text-align: center;
                         margin-top: 20px;
                     }
+                    /* Styling for the icons */
+                    .icon {
+                        position: absolute;
+                        top: 8px;
+                        right: 10px;
+                        width: 50px;  /* Set to 25px as requested */
+                        height: auto;
+                    }
                 </style>
             </head>
             <body>
@@ -239,6 +258,8 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                         <!-- Sidebar -->
                         <td class="sidebar" valign="top">
                             <div class="panel">
+                                <!-- Useful Links box icon -->
+                                <img src="/webicon.gif" class="icon" alt="Useful Links Icon">
                                 <h2>Useful Links</h2>
                                 <ul>
                                     <li><a href="http://macintoshgarden.org" target="_blank">Macintosh Garden</a></li>
@@ -253,6 +274,8 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                         <!-- Main file upload section -->
                         <td class="dialog" valign="top">
                             <div class="panel">
+                                <!-- HTTP File Server box icon -->
+                                <img src="/server.gif" class="icon" alt="HTTP File Server Icon">
                                 <h1> HTTP File Server </h1>
                                 <div class="gif-container">
                                     <img src="/artifact.gif" alt="Artifact GIF">
@@ -271,12 +294,11 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 </table>
                 <footer>
                     <p>Created by Xenocide21 | Date: 22-11-24</p>
+                    <p>Arbitration: <a href="https://www.vecteezy.com/free-vector/internet-icon">Internet Icon Vectors by Vecteezy</a> <a href="https://www.vecteezy.com/free-vector/network-server">Network Server Vectors by Vecteezy</a> </p>
                 </footer>
             </body>
             </html>
             """)
-
-
 
     def do_POST(self):
         # Handle file uploads
